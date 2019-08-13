@@ -1,0 +1,17 @@
+The following files were edited
+
+File           |         Lines
+_______________________________
+shm_cnt.c
+vm.c                   14 - 22
+                       405 - 467
+usys.S                 32 - 33
+uspinlock.h
+uspinlock.c
+sysproc.c              11 - 23
+syscall.h              23 - 24
+syscall.c              101 - 102
+                       126 - 127
+user.h                 41 - 42
+defs.h                 178 - 179
+Makefile -             136, 174, 244

@@ -1,0 +1,54 @@
+#include "types.h"
+#include "user.h"
+#include "uspinlock.h"
+
+struct shm_cnt
+{
+  struct uspinlock lock;
+  volatile int cnt;
+};
+
+int main()
+{
+  int pid;
+  pid = fork();
+  struct shm_cnt *pbase; 
+  struct shm_cnt *cbase; 
+
+  if (pid > 0 )
+  {
+    int p;
+    pbase = (struct shm_cnt *)shm_open(0xbeefbeef);
+    initulock(&pbase->lock);
+//    pbase->cnt = 0;
+
+    for (p = 0; p < 100000; p++)
+    {
+      uacquire(&pbase->lock);
+      pbase->cnt = pbase->cnt + 1;
+      urelease(&pbase->lock);
+    }
+    wait();
+    printf(1, "%d\n", pbase->cnt);
+  }
+  if (pid == 0) 
+  {
+    int c;
+    cbase = (struct shm_cnt *)shm_open(0xbeefbeef);
+
+    for (c = 0; c < 100000; c++)
+    {
+      uacquire(&cbase->lock);
+      cbase->cnt = cbase->cnt + 1;
+      urelease(&cbase->lock);
+    }
+  }
+
+//  if (pid != 0) printf(1, "%d\n", pbase->cnt);
+
+  shm_close(0xbeefbeef);
+  exit();
+  return 0;
+}
+
+
